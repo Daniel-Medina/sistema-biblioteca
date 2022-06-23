@@ -30,6 +30,11 @@ class ApiAutoresController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'nombre' => 'required|min:3',
+            'apellidos' => 'required|min:3',
+        ]);
+        
         $autor = Autor::create([
             'nombre' => $request->nombre,
             'apellidos' => $request->apellidos,
@@ -62,6 +67,10 @@ class ApiAutoresController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'nombre' => 'required|min:3',
+            'apellidos' => 'required|min:3',
+        ]);
 
         $autor = Autor::find($id);
 
