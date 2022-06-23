@@ -15,7 +15,7 @@ class ApiController extends Controller
     public function index()
     {
         //
-        $autores = Autor::all();
+        $autores = Autor::where('estatus', 'ACTIVO')->get();
 
         return \response()->json($autores, 200);
     }
@@ -45,9 +45,10 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Autor $autor)
+    public function show($id)
     {
         //
+        $autor = Autor::find($id);
         return \response()->json($autor, 200);
     }
 
@@ -58,9 +59,12 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Autor $autor)
+    public function update(Request $request, $id)
     {
         //
+
+        $autor = Autor::find($id);
+
         $autor->update([
             'nombre' => $request->nombre,
             'apellidos' => $request->apellidos,
@@ -74,13 +78,15 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Autor $autor)
+    public function destroy($id)
     {
         //
-        $autor->update([
-            'estatus' => 'OCULTO',
-        ]);
+        $autor = Autor::find($id);
 
-        return \response()->json(['mensaje' => 'Correcto']);
+
+        $autor->estatus = 'OCULTO';
+        $autor->save();
+
+
     }
 }
