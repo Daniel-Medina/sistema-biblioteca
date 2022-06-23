@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Autor;
 
 class ApiController extends Controller
 {
@@ -14,17 +15,11 @@ class ApiController extends Controller
     public function index()
     {
         //
+        $autores = Autor::all();
+
+        return \response()->json($autores, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,6 +30,13 @@ class ApiController extends Controller
     public function store(Request $request)
     {
         //
+        $autor = Autor::create([
+            'nombre' => $request->nombre,
+            'apellidos' => $request->apellidos,
+            'foto' => null,
+        ]);
+
+        return \response()->json(['mensaje' => 'Correcto']);
     }
 
     /**
@@ -43,20 +45,10 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Autor $autor)
     {
         //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return \response()->json($autor, 200);
     }
 
     /**
@@ -66,9 +58,14 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Autor $autor)
     {
         //
+        $autor->update([
+            'nombre' => $request->nombre,
+            'apellidos' => $request->apellidos,
+            'foto' => null,
+        ]);
     }
 
     /**
@@ -77,8 +74,13 @@ class ApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Autor $autor)
     {
         //
+        $autor->update([
+            'estatus' => 'OCULTO',
+        ]);
+
+        return \response()->json(['mensaje' => 'Correcto']);
     }
 }

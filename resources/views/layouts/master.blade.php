@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Biblioteca</title>
+    @stack('css')
 </head>
 
 <!-- Bootstrap css-->
@@ -43,8 +44,10 @@
         {{ $slot }}
     </div>
     
-	<script src="assets/js/popper.min.js"></script>
-
     <script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/popper.js"></script>
+	<script src="assets/js/jquery.min.js"></script>
+
+    @stack('js')
 </body>
 </html>
