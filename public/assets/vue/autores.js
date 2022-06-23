@@ -15,7 +15,9 @@ new Vue({
         nombre: '',
         apellidos: '',
         foto: '',
+        buscar: '',
         autores: [],
+        validaciones: new Object,
     },
 
     created() {
@@ -30,10 +32,43 @@ new Vue({
         },
 
         resetUi: function () {
+            this.validaciones = new Object,
             this.nombre = "";
             this.apellidos = "";
             this.id_autor = 0;
         },
+
+        //Validar
+        validar: function () {
+
+            //Se debe regresar un true o un false
+            this.validaciones = new Object;
+
+            //Validar el nombre
+            if (!this.nombre) {
+                //Si esta vacio
+                this.validaciones['nombre'] = 'El nombre no puede ser nulo';
+            } else if (this.nombre.length < 3) {
+                this.validaciones['nombre'] = 'El nombre debe tener al menos 3 caracteres';
+            }
+
+            //Validar los apellidos
+            if (!this.apellidos) {
+                //Si esta vacio
+                this.validaciones['apellidos'] = 'Los apellidos no puede ser nulo';
+            } else if (this.apellidos.length < 3) {
+                this.validaciones['apellidos'] = 'Los apellidos debe tener al menos 3 caracteres';
+            }
+
+
+            if (this.validaciones.nombre || this.validaciones.apellidos) {
+                //True si existe algun error
+                return true;
+            } else {
+                //false si todos los campos son correctos
+                return false;
+            }
+        }, //Fin de validar
 
         listarUsuarios: function () {
             this.$http.get(url).then(function (json) {
@@ -43,12 +78,17 @@ new Vue({
             });
         },
 
-        crearUsuario: function() {
+        crearUsuario: function () {
             this.resetUi();
             this.modal("show");
         },
 
         agregarUsuario: function () {
+            //Realizar validaciones
+            if (this.validar()) {
+                //si existe un error cancelar proceso 
+                return;
+            }
 
             //Array con los datos
             autor = {
@@ -61,14 +101,16 @@ new Vue({
                 //Si es exitoso cerrar la modal
                 this.modal("hide")
                 this.listarUsuarios();
+                this.resetUi();
             }).catch(function (json) {
                 //Mostrar los errores en consola
                 console.log(json);
+                this.validaciones['nombre'] = json.data.errors.nombre[0];
+                this.validaciones['apellidos'] = json.data.errors.apellidos[0];
             });
 
             this.listarUsuarios();
-            this.resetUi();
-
+            
         },
 
         editarUsuario: function (id) {
@@ -86,7 +128,13 @@ new Vue({
             this.modal("show")
         },
 
-        actualizarUsuario: function() {
+        actualizarUsuario: function () {
+            //Realizar validaciones
+            if (this.validar()) {
+                //si existe un error cancelar proceso 
+                return;
+            }
+
             //Array con los datos
             autor = {
                 nombre: this.nombre,
@@ -101,10 +149,19 @@ new Vue({
             }).catch(function (json) {
                 //Mostrar los errores en consola
                 console.log(json);
+                this.validaciones['nombre'] = json.data.errors.nombre[0];
+                this.validaciones['apellidos'] = json.data.errors.apellidos[0];
             });
+            this.listarUsuarios();
         },
 
-        eliminarUsuario: function() {
+        eliminarUsuario: function () {
+            //Confirmar eliminación
+            if (!confirm('Desea eliminar este usuario')) {
+                return;
+            }
+
+            
             this.$http.delete(url + '/' + this.id_autor).then(function (json) {
                 //Si es exitoso cerrar la modal
                 this.modal("hide")
@@ -115,9 +172,19 @@ new Vue({
                 console.log(json);
             });
         }
-        
 
-    } //Fin de methods
 
+    }, //Fin de methods
+
+    computed: {
+        filtroUsuarios: function () {
+            return this.autores.filter((usuario) => {
+                return usuario.nombre.toLowerCase().match(this.buscar.toLowerCase().trim()) ||
+                    usuario.apellidos.toLowerCase().match(this.buscar.toLowerCase().trim());
+
+            });
+        },
+
+    }
 
 });
