@@ -15,9 +15,8 @@ use App\Http\Controllers\ApiController;
 */
 
 Route::get('/', function() {
-    //return view('index');
+    return view('index');
 });
 
-Route::get('autores', [ApiController::class,'apiresource']);
 
 

@@ -1,4 +1,10 @@
-var url = "http://dispositivo.test/api/autores"
+var host = window.location.hostname;
+
+if (host == '127.0.0.1') {
+    host = host + ":8000";
+}
+
+var url = "http://" + host + "/api/autores";
 
 new Vue({
 
